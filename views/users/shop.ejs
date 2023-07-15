@@ -183,45 +183,46 @@
                     </form>
                 </div>
             </div>
+            
+            <style>
+                .dropdown {
+                    position: relative;
+                    display: inline-block;
+                }
+    
+                .dropdown .dropdown-menu {
+                    display: none;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    background-color: #f9f9f9;
+                    padding: 10px;
+                    list-style-type: none;
+                    margin: 0;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                }
+    
+                .dropdown:hover .dropdown-menu {
+                    display: block;
+                }
+    
+                .dropdown-menu li {
+                    margin-bottom: 5px;
+                }
+    
+                .dropdown-menu a {
+                    display: block;
+                    padding: 5px 10px;
+                    color: #333;
+                    text-decoration: none;
+                }
+    
+                .dropdown-menu a:hover {
+                    background-color: #ddd;
+                }
+            </style>
+
         </header>
-
-        <style>
-            .dropdown {
-                position: relative;
-                display: inline-block;
-            }
-
-            .dropdown .dropdown-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                background-color: #f9f9f9;
-                padding: 10px;
-                list-style-type: none;
-                margin: 0;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            }
-
-            .dropdown:hover .dropdown-menu {
-                display: block;
-            }
-
-            .dropdown-menu li {
-                margin-bottom: 5px;
-            }
-
-            .dropdown-menu a {
-                display: block;
-                padding: 5px 10px;
-                color: #333;
-                text-decoration: none;
-            }
-
-            .dropdown-menu a:hover {
-                background-color: #ddd;
-            }
-        </style>
 
         <br><br><br>
         <div class="bg0 m-t-23 p-b-140">
