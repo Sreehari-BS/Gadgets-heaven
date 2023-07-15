@@ -984,7 +984,7 @@ const loadGuestShop = async (req, res) => {
   try {
     const products = await Product.find().populate('category');
     const categories = await Category.find();
-    res.render('guestshop', { products, categories });
+    res.render('guestShop', { products, categories });
   } catch (error) {
     res.render('404_errorPage', { message: error.message });
   }
