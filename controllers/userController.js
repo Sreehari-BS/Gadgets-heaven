@@ -357,7 +357,7 @@ const loadUserProfile = async (req, res) => {
     res.set('Cache-Control', 'no-store');
     const userId = req.params.user_id;
     const user = await User.findById(userId);
-    res.render('userProfile', { user });
+    res.render('userprofile', { user });
   } catch (error) {
     res.render('404_errorPage', { message: error.message });
   }
