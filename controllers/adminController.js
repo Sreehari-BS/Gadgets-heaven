@@ -2,10 +2,12 @@ const puppeteer = require('puppeteer');
 const ejs = require('ejs');
 const fs = require('fs');
 const path = require('path');
+const ImageKit = require('imagekit');
 // const { error } = require('console');
 const User = require('../models/userModel');
 const Product = require('../models/productModel');
 const Category = require('../models/categoryModel');
+const Cart = require('../models/cartModel')
 const Order = require('../models/orderModel');
 const Admin = require('../models/adminModel');
 const Banner = require('../models/bannerModel');
@@ -280,6 +282,12 @@ const loadAddProducts = async (req, res) => {
   }
 };
 
+const imagekit = new ImageKit({
+  publicKey: 'public_iossN/KUovNpeCnvrM32hmNestE=',
+  privateKey: 'private_riVGPvUavjHY2Sf8+8MPV5hwAa8=',
+  urlEndpoint: 'https://ik.imagekit.io/imgCDN1',
+});
+
 const insertProduct = async (req, res) => {
   try {
     res.set('Cache-Control', 'no-store');
@@ -290,18 +298,46 @@ const insertProduct = async (req, res) => {
     if (productData) {
       return res.render('addProducts', { message: 'The Same Product Already Exists', categories });
     }
+
+    // Upload images to CDN
+    const uploadPromises = req.files.map((file) => {
+      return new Promise((resolve, reject) => {
+        imagekit.upload({
+          file: file.buffer,
+          fileName: `${Date.now()}-${file.originalname}`,
+          transformation: [
+            {
+              width: 600,
+              height: 600,
+              crop: 'at_max',
+            },
+          ],
+        }, (error, result) => {
+          if (error) {
+            console.error(error);
+            reject(error);
+          } else {
+            resolve(result.url);
+          }
+        });
+      });
+    });
+
+    const uploadedImageUrls = await Promise.all(uploadPromises);
+
     const product = new Product({
       title: req.body.title,
       category: req.body.category,
       quantity: req.body.quantity,
       price: req.body.price,
       description: req.body.description,
-      images: req.files.map((file) => file.filename),
+      images: uploadedImageUrls,
       is_in_cart: 0,
       is_available: 0,
     });
+
     await product.save();
-    res.render('addProducts', { message: 'Poduct is succesfullly Added', categories });
+    res.render('addProducts', { message: 'Product is successfully added', categories });
   } catch (error) {
     res.render('404_errorPage', { message: error.message });
   }
@@ -330,15 +366,57 @@ const updateProduct = async (req, res) => {
       price: req.body.price,
       description: req.body.description,
     };
-    if (req.files && req.files.length > 0) {
-      const images = req.files.map((file) => file.filename);
-      updatedData.images = images;
+    if (req.files && req.files.length >= 0) {
+      const uploadPromises = req.files.map((file) => {
+        return new Promise((resolve, reject) => {
+          imagekit.upload({
+            file: file.buffer,
+            fileName: `${Date.now()}-${file.originalname}`,
+            transformation: [
+              {
+                width: 600,
+                height: 600,
+                crop: 'at_max',
+              },
+            ],
+          }, (error, result) => {
+            if (error) {
+              console.error(error);
+              reject(error);
+            } else {
+              resolve(result.url);
+            }
+          });
+        });
+      });
+
+      const uploadedImageUrls = await Promise.all(uploadPromises);
+
+      const product = await Product.findById(productId);
+      product.images.push(...uploadedImageUrls);
+      await product.save();
+
     }
+
     await Product.findByIdAndUpdate(productId, updatedData);
     res.redirect('/admin/products');
   } catch (error) {
     res.render('404_errorPage', { message: error.message });
   }
+};
+
+const deleteProductImage = async (req, res) => {
+  try {
+    res.set('Cache-Control', 'no-store');
+    const productId = req.query.product_id;
+    const index = req.query.index;
+    const product = await Product.findById(productId);
+    product.images.splice(index, 1);
+    await product.save()
+    res.redirect(`/admin/products/editProduct/${productId}`)
+  } catch (error) {
+    res.render('404_errorPage', { message: error.message });
+  };
 };
 
 const deleteProduct = async (req, res) => {
@@ -468,10 +546,35 @@ const updateCategory = async (req, res) => {
 const loadOrders = async (req, res) => {
   try {
     res.set('Cache-Control', 'no-store');
-    const orders = await Order.find()
-      .populate('purchasedProducts.product');
+    const orders = await Order.find().populate('purchasedProducts.product');
 
     res.render('adminOrder', { orders });
+  } catch (error) {
+    res.render('404_errorPage', { message: error.message });
+  }
+};
+
+const loadDetailedOrder = async (req, res) => {
+  try {
+    res.set('Cache-Control', 'no-store');
+    const purchasedDate = new Date(req.params.purchased_date);
+    const cartId = req.params.cart_id;
+    const cart = await Cart.findById(cartId);
+    const userId = cart.user;
+    const user = await User.findById(userId);
+    const order = await Order.findOne({ cart: cartId });
+    let products = [];
+
+    for (const orderItem of order.purchasedProducts) {
+      if (
+        orderItem.date.toISOString() === purchasedDate.toISOString() &&
+        orderItem.userName === user.name
+      ) {
+        const product = await Product.findById(orderItem.product).populate('category');
+        products.push(product);
+      }
+    }
+    res.render('detailedOrder', { user, products, order });
   } catch (error) {
     res.render('404_errorPage', { message: error.message });
   }
@@ -920,6 +1023,7 @@ module.exports = {
   insertProduct,
   loadEditProduct,
   updateProduct,
+  deleteProductImage,
   deleteProduct,
   recoverProduct,
   loadCategory,
@@ -928,6 +1032,7 @@ module.exports = {
   deleteCategory,
   recoverCategory,
   loadOrders,
+  loadDetailedOrder,
   updateOrderStatus,
   loadBanner,
   loadAddBanner,

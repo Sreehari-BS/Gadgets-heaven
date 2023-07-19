@@ -24,12 +24,12 @@
 									<div class="slick3 gallery-lb">
 										<% for(i=0;i<product.images.length;i++){ %>
 											<div class="item-slick3"
-												data-thumb="/productImages/<%= product.images[i] %>">
+												data-thumb="<%= product.images[i] %>">
 												<div style="background-image: url('/images/backdrop.jpg'); height: 600px; display: flex; justify-content: center; align-items: center;"
 													class="wrap-pic-w pos-relative">
-													<a href="/productImages/<%= product.images[i] %>" class="MagicZoom">
+													<a href="<%= product.images[i] %>" class="MagicZoom">
 														<img style="max-height: 600px;"
-															src="/productImages/<%= product.images[i] %>"
+															src="<%= product.images[i] %>"
 															alt="IMG-PRODUCT">
 													</a>
 												</div>

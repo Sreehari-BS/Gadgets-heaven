@@ -109,7 +109,7 @@
                             <%= offer.offerDiscount %>
                         </td>
                         <td>
-                            <%= offer.endDate %>
+                            <%= offer.endDate.toLocaleDateString() %>
                         </td>
                         <td style="color: <%= offer.is_available ? 'green' : 'red' %>;">
                             <strong>

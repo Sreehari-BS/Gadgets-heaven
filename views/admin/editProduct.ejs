@@ -39,11 +39,17 @@
                                     <p>Previous Images:</p>
                                     <% if (Array.isArray(product.images) && product.images.length> 0) { %>
                                         <div class="mt-3">
-                                            <% for (let i=0; i < product.images.length; i++) { %>
-                                                <img src="/productImages/<%= product.images[i] %>"
-                                                    alt="<%= product.images[i] %>"
-                                                    style="max-width: 200px; margin-bottom: 10px;">
-                                                <% } %>
+                                            <div class="d-flex flex-wrap">
+                                                <% for (let i=0; i < product.images.length; i++) { %>
+                                                    <div class="d-flex flex-column align-items-center mx-2">
+                                                        <img src="<%= product.images[i] %>"
+                                                            alt="<%= product.images[i] %>"
+                                                            style="width: 200px; max-height: 200px; margin-bottom: 10px;">
+                                                        <a href="/admin/deleteProductImage?product_id=<%= product._id %>&index=<%= i %>"
+                                                            class="btn btn-danger">Delete</a>
+                                                    </div>
+                                                    <% } %>
+                                            </div>
                                         </div>
                                         <% } %>
                                 </div>

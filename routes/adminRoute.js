@@ -25,7 +25,7 @@ adminRoute.use(express.static(path.resolve(__dirname, '../public')));
 adminRoute.use(express.json());
 adminRoute.use(express.urlencoded({ extended: true }));
 
-const storage = multer.diskStorage({
+const storage = multer.memoryStorage({
   destination: (req, file, cb) => {
     cb(null, path.resolve(__dirname, '../public/productImages'));
   },
@@ -74,6 +74,7 @@ adminRoute.get('/products/addProducts', auth.isLogin, adminController.loadAddPro
 adminRoute.post('/products/addProducts', auth.isLogin, upload.array('images'), adminController.insertProduct);
 adminRoute.get('/products/editProduct/:product_id', auth.isLogin, adminController.loadEditProduct);
 adminRoute.post('/products/editProduct/:product_id', upload.array('images'), adminController.updateProduct);
+adminRoute.get('/deleteProductImage',auth.isLogin,adminController.deleteProductImage);
 adminRoute.post('/products/deleteProduct/:product_id', auth.isLogin, adminController.deleteProduct);
 adminRoute.post('/products/recoverProduct/:product_id', adminController.recoverProduct);
 adminRoute.get('/category', auth.isLogin, adminController.loadCategory);
@@ -84,6 +85,7 @@ adminRoute.post('/category/recoverCategory/:category_id', adminController.recove
 adminRoute.get('/category/editCategory/:category_id', auth.isLogin, adminController.loadEditCategory);
 adminRoute.post('/category/editCategory/:category_id', categoryUpload.single('categoryImage'), adminController.updateCategory);
 adminRoute.get('/orders', auth.isLogin, adminController.loadOrders);
+adminRoute.get('/detailedOrder/:purchased_date/:cart_id',auth.isLogin,adminController.loadDetailedOrder);
 adminRoute.post('/orders/updateOrderStatus/:order_id/:product_id/:purchasedProduct_id', adminController.updateOrderStatus);
 adminRoute.get('/banner', auth.isLogin, adminController.loadBanner);
 adminRoute.get('/banner/addBanner', auth.isLogin, adminController.loadAddBanner);

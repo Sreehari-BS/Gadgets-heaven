@@ -266,6 +266,7 @@ const loadUserHome = async (req, res) => {
 // user Logout
 const userLogout = async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store');
     req.session.user_id = null;
     res.redirect('/');
   } catch (error) {

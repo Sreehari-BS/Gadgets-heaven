@@ -84,16 +84,17 @@
                                                                 <td colspan="10" class="text-center">
                                                                     <br>
                                                                     <button class=" btn btn-secondary text-center"
-                                                                        style="border-radius: 20px;">
+                                                                        style="border-radius: 20px; pointer-events: none;">
                                                                         <h6><strong>
                                                                                 <%= currentUserId %>,<%= currentTime %>
                                                                             </strong></h6>
                                                                     </button>
+                                                                    <a href="/admin/detailedOrder/<%= purchasedProduct.date %>/<%= order.cart %>" class="btn btn-primary" style="border-radius: 20px;"><strong>View fullDetails</strong></a>
                                                                 </td>
                                                             </tr>
                                                             <% } %>
                                                                 <tr>
-                                                                    <td><img src="/productImages/<%= purchasedProduct.product.images[2] %>"
+                                                                    <td><img src="<%= purchasedProduct.product.images[2] %>"
                                                                             alt="Product Image" width="100"></td>
                                                                     <td>
                                                                         <%= purchasedProduct.product.title %>
