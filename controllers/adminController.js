@@ -574,7 +574,7 @@ const loadDetailedOrder = async (req, res) => {
         products.push(product);
       }
     }
-    res.render('detailedOrder', { user, products, order });
+    res.render('detailedOrder', { user, products, order, purchasedDate });
   } catch (error) {
     res.render('404_errorPage', { message: error.message });
   }

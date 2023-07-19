@@ -53,15 +53,18 @@
                                 <td class="text-success" style="border: 1px solid black; padding: 8px;">
                                     <strong>₹<%= product.price %></strong>
                                 </td>
-                                <% order.purchasedProducts.forEach(purchase=> {
-                                    if (purchase.product.toString() === product._id.toString()) { %>
-                                    <td style="border: 1px solid black; padding: 8px;">
-                                        <%= purchase.quantity %>
-                                    </td>
-                                    <td class="text-danger" style="border: 1px solid black; padding: 8px;">
-                                        <strong><%= purchase.status %></strong>
-                                    </td>
-                                    <% } }); %>
+                                <% order.purchasedProducts.forEach(purchase => {
+                                    if (purchase.product.toString() === product._id.toString()) {
+                                      if (purchase.date.toISOString() === purchasedDate.toISOString()) { %>
+                                        <td style="border: 1px solid black; padding: 8px;">
+                                          <%= purchase.quantity %>
+                                        </td>
+                                        <td class="text-danger" style="border: 1px solid black; padding: 8px;">
+                                          <strong><%= purchase.status %></strong>
+                                        </td>
+                                      <% }
+                                    }
+                                  }); %>                                  
                             </tr>
                         </Table>
                         <% }); %>
